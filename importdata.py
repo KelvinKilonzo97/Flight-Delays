@@ -87,3 +87,45 @@ print(final_df)
 final_df.shape
 final_df.info()
 final_df.isna().any()
+final_df.columns
+#Percentage of column missing values
+final_df.isna().mean() * 100
+final_df.ARR_DELAY_GROUP.nunique()
+final_df.ARR_DELAY_GROUP.unique()
+df = final_df[["YEAR","QUARTER","MONTH","DAY_OF_MONTH","DAY_OF_WEEK","FL_DATE","TAIL_NUM","ORIGIN","DEST","CRS_DEP_TIME","DEP_TIME","DEP_DELAY","DEP_DEL15","CRS_ARR_TIME","ARR_TIME","ARR_DELAY","ARR_DEL15","WEATHER_DELAY"]]
+df.shape
+df.ORIGIN.nunique()
+df.DEST.nunique()
+df.DEST.unique()
+df.DEP_DEL15.unique()
+# About 18% of flights departed with delays. We will have to deal with class imbalance in the modeling process later.
+# About 1.5% of flights don't have labels on delays (These are cancelled flights).
+total_flight = df.count()
+delayed_flight = df[df.DEP_DEL15 == 1]
+on_time_flight = df[df.DEP_DEL15 == 0]
+cancelled_flight = df[df.DEP_DEL15.isNull()]
+print(f'Total Flight: {total_flight}')
+print(f'Total Flight delayed by more than 15 minutes: {delayed_flight.count()}')
+print(f'Delayed Flight: {delayed_flight.count() / total_flight }')
+print(f'On Time Flight: {on_time_flight.count() / total_flight}')
+print(f'Cancelled Flight: {cancelled_flight.count() / total_flight}')
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import io
+
+plt.figure(figsize=(8, 6))
+plt.imshow(df.isnull(), cmap='viridis', aspect='auto')
+plt.title('Heatmap of Missing Data')
+plt.xlabel('Columns')
+plt.ylabel('Rows')
+plt.colorbar(label='Missing Data')
+plt.show()
+
+df.MONTH.value_counts().plot.barh()
+airports = ('ATL','CLT','DEN','DFW','EWR','IAH','JFK','LAS','LAX','MCO','MIA','ORD','PHX','SEA','SFO')
+df = df[df["Origin"].isin(airports)]
+df = df[df["Dest"].isin(airports)]
+
+print(df.info())
